@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.http import HttpRequest
 from lists.models import Item, List
 from lists.views import home_page
+from django.utils.html import escape
 	
 
 class HomePageTest(TestCase):
@@ -37,6 +38,18 @@ class NewListTest(TestCase):
 		)
 		new_list = List.objects.first()
 		self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
+
+	def test_validation_errors_are_sent_back_to_home_page_template(self):
+		response = self.client.post('/lists/new', data={'item_text': ''})
+		self.assertEqual(response.status_code, 200)
+		self.assertTemplateUsed(response, 'home.html')
+		expected_error = escape("You can't have an empty list item")
+		self.assertContains(response, expected_error)
+
+	def test_invalid_list_items_arent_saved(self):
+		self.client.post('/lists/new', data={'item_text': ''})
+		self.assertEqual(List.objects.count(), 0)
+		self.assertEqual(Item.objects.count(), 0)
 
 class ListViewTest(TestCase):
 	def test_passes_correct_list_to_template(self):
@@ -88,7 +101,7 @@ class ListViewTest(TestCase):
 #		self.assertEqual(first_saved_item.text, 'The first (ever) list item')
 #		self.assertEqual(first_saved_item.list, list_)
 #		self.assertEqual(second_saved_item.text, 'Item the second')
-#		self.assertEqual(second_saved_item.list, list_)
+##		self.assertEqual(second_saved_item.list, list_)
 
 class NewItemTest(TestCase):
 	def test_can_save_a_POST_request_to_an_existing_list(self):
