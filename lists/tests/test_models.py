@@ -98,6 +98,10 @@ class ListAndItemModelsTest(TestCase):
 			item.save()
 			item.full_clean()
 
+	def test_get_absolute_url(self):
+		list_ = List.objects.create()
+		self.assertEqual(list_.get_absolute_url(), '/lists/%d/' % (list_.id,))
+
 #class NewItemTest(TestCase):
 #	def test_can_save_a_POST_request_to_an_existing_list(self):
 #		other_list = List.objects.create()
