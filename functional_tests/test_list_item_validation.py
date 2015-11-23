@@ -6,7 +6,7 @@ from .base import FunctionalTest
 import sys
 
 
-class ItemValidationTest(FunctionalTest):	
+class ItemValidationTest(FunctionalTest):
 
 	def test_cannot_add_empty_list_items(self):
 		# Edith goes to the home page and accidentally tries to submit
